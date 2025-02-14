@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-
+import numpy as np
 from ml.data import apply_label, process_data
 from ml.model import inference, load_model
 
@@ -43,6 +43,7 @@ async def get_root():
 
 @app.post("/data/")
 async def post_inference(data: Data):
+    print("Columns in the input data:", data.dict().keys())
     # DO NOT MODIFY: turn the Pydantic model into a dict.
     data_dict = data.dict()
     # DO NOT MODIFY: clean up the dict to turn it into a Pandas DataFrame.
@@ -61,6 +62,9 @@ async def post_inference(data: Data):
         "sex",
         "native-country",
     ]
+# Check if 'salary' is present in the data
+    print("Columns in the input data:", data.columns)
+
     data_processed, _, _, _ = process_data(
         data, 
         categorical_features=cat_features, 
@@ -68,7 +72,7 @@ async def post_inference(data: Data):
         training=False, 
         encoder=encoder, 
         lb=None
-
     )
+    print("Processed Data:", data_processed)
     _inference = inference(model, data_processed)
     return {"result": apply_label(_inference)}

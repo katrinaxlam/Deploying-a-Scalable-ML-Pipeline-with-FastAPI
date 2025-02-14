@@ -44,11 +44,22 @@ def process_data(
         passed in.
     """
 
+   # if label is not None:
+       # y = X[label]
+       # X = X.drop([label], axis=1)
+   # else:
+       # y = np.array([])
+
     if label is not None:
-        y = X[label]
-        X = X.drop([label], axis=1)
+        if label not in X.columns:
+           print(f"Warning: Label column '{label}' not found in the data. Using default label.")
+           y = np.array([])  # default to empty or set a default value
+        else:
+            y = X[label]
+            X = X.drop([label], axis=1)
     else:
-        y = np.array([])
+        y = np.array([])  # If no label is provided
+  
 
     X_categorical = X[categorical_features].values
     X_continuous = X.drop(*[categorical_features], axis=1)
