@@ -12,13 +12,12 @@ from ml.model import (
     save_model,
     train_model,
 )
-# TODO: load the cencus.csv data
+
 project_path = "/Users/katrinalam/Deploying-a-Scalable-ML-Pipeline-with-FastAPI"
 data_path = os.path.join(project_path, "data", "census.csv")
 print(data_path)
 data = pd.read_csv(data_path)
 
-# TODO: split the provided data to have a train dataset and a test dataset
 # Optional enhancement, use K-fold cross validation instead of a train-test split.
 train, test = train_test_split(data, test_size=0.2, random_state=42)
 
@@ -51,7 +50,7 @@ X_test, y_test, _, _ = process_data(
     lb=lb,
 )
 
-# TODO: use the train_model function to train the model on the training dataset
+
 model = train_model(X_train, y_train)
 
 # Ensure the model directory exists
@@ -74,7 +73,7 @@ model = load_model(
     model_path
 ) 
 
-# TODO: use the inference function to run the model inferences on the test dataset.
+
 # Run inference on the test dataset
 preds = inference(model, X_test)
 
@@ -85,19 +84,20 @@ print("Predictions on test set:", preds[:10])
 p, r, fb = compute_model_metrics(y_test, preds)
 print(f"Precision: {p:.4f} | Recall: {r:.4f} | F1: {fb:.4f}")
 
-# TODO: compute the performance on model slices using the performance_on_categorical_slice function
 # iterate through the categorical features
 for col in cat_features:
     # iterate through the unique values in one categorical feature
     for slicevalue in sorted(test[col].unique()):
         count = test[test[col] == slicevalue].shape[0]
         p, r, fb = performance_on_categorical_slice(
-	   model,  # The trained model
-    	   test,   # The test dataset
-    	   X_test, # The processed test features
-    	   y_test, # The actual test labels
-    	   col,    # The categorical column being analyzed
-    	   slicevalue  # The unique value within that column
+	   test,  # The test dataset (data)
+           col,   # The categorical column being analyzed (column_name)
+           slicevalue,  # The unique value within that column (slice_value)
+           cat_features, # List of categorical features (categorical_features)
+           "salary",  # The label column (label)
+           encoder,  # The encoder (OneHotEncoder)
+           lb,  # The label binarizer (LabelBinarizer)
+           model  # The trained model (model)
 )
 
         with open("slice_output.txt", "a") as f:
